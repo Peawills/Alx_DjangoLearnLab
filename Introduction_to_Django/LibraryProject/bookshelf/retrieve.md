@@ -1,3 +1,5 @@
+# Retrieve and display the created book
+
 >>> from bookshelf.models import Book
 >>> book = Book.objects.first()
 >>> book.title

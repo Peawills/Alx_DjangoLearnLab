@@ -1,4 +1,4 @@
-# Delete the book and confirm deletion
+# Delete the book and confirm it's gone
 
 >>> from bookshelf.models import Book
 >>> book = Book.objects.first()
