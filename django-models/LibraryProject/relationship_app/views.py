@@ -12,34 +12,24 @@ from django.shortcuts import get_object_or_404
 from .forms import BookForm
 
 
-# Add Book
 @permission_required("relationship_app.can_add_book", raise_exception=True)
 def add_book(request):
-    if request.method == "POST":
-        form = BookForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("book_list")
-    else:
-        form = BookForm()
-    return render(
-        request, "relationship_app/book_form.html", {"form": form, "action": "Add"}
-    )
+    form = BookForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect("list_books")  # Replace with your actual list view name
+    return render(request, "relationship_app/book_form.html", {"form": form})
 
 
-# Edit Book
 @permission_required("relationship_app.can_change_book", raise_exception=True)
 def edit_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
-    if request.method == "POST":
-        form = BookForm(request.POST, instance=book)
-        if form.is_valid():
-            form.save()
-            return redirect("book_list")
-    else:
-        form = BookForm(instance=book)
+    form = BookForm(request.POST or None, instance=book)
+    if form.is_valid():
+        form.save()
+        return redirect("list_books")  # Replace with your actual list view name
     return render(
-        request, "relationship_app/book_form.html", {"form": form, "action": "Edit"}
+        request, "relationship_app/book_form.html", {"form": form, "book": book}
     )
 
 
