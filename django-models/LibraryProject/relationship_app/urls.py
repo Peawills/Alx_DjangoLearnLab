@@ -17,4 +17,7 @@ urlpatterns = [
         name="logout",
     ),
     path("register/", views.register_view, name="register"),
+    path("admin-role/", views.admin_view, name="admin_view"),
+    path("librarian-role/", views.librarian_view, name="librarian_view"),
+    path("member-role/", views.member_view, name="member_view"),
 ]
