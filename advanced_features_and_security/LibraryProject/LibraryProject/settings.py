@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-(-x$)77c!1p&9ql)_oeb@58k!m#%0co2ep7rz(l^)8r=k&7^5r"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -129,3 +129,15 @@ LOGIN_REDIRECT_URL = "/"  # or 'home' if using named URLs
 LOGOUT_REDIRECT_URL = "/login/"
 
 AUTH_USER_MODEL = "bookshelf.CustomUser"
+
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = "DENY"
+SECURE_CONTENT_TYPE_NOSNIFF = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# CSP (optional, needs django-csp package)
+# pip install django-csp
+INSTALLED_APPS += ["csp"]
+MIDDLEWARE += ["csp.middleware.CSPMiddleware"]
+CSP_DEFAULT_SRC = ("'self'",)
