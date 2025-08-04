@@ -141,3 +141,21 @@ SESSION_COOKIE_SECURE = True
 INSTALLED_APPS += ["csp"]
 MIDDLEWARE += ["csp.middleware.CSPMiddleware"]
 CSP_DEFAULT_SRC = ("'self'",)
+
+
+# Force all HTTP traffic to be redirected to HTTPS
+SECURE_SSL_REDIRECT = True  # Redirect all HTTP to HTTPS
+
+# Enable HTTP Strict Transport Security (HSTS)
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply to subdomains
+SECURE_HSTS_PRELOAD = True  # Preload list submission
+
+# Secure cookie settings
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# HTTP security headers
+X_FRAME_OPTIONS = "DENY"  # Prevent clickjacking
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent content sniffing
+SECURE_BROWSER_XSS_FILTER = True  # Enable XSS filter
