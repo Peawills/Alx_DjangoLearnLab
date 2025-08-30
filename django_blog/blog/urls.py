@@ -6,11 +6,23 @@ from .views import (
     PostCreateView,
     PostUpdateView,
     PostDeleteView,
+    CommentCreateView,
+    CommentUpdateView,
+    CommentDeleteView,
     register,
     profile,
 )
 
 urlpatterns = [
+    path(
+        "post/<int:post_id>/comments/new/",
+        CommentCreateView.as_view(),
+        name="comment-create",
+    ),
+    path("comments/<int:pk>/edit/", CommentUpdateView.as_view(), name="comment-edit"),
+    path(
+        "comments/<int:pk>/delete/", CommentDeleteView.as_view(), name="comment-delete"
+    ),
     # Blog post URLs
     path("", PostListView.as_view(), name="post-list"),  # Home / list of posts
     path(
