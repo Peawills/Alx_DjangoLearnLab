@@ -3,63 +3,36 @@ from .models import Book
 from .serializers import BookSerializer
 
 
-# --------------------------
-# CRUD Views for Book Model
-# --------------------------
-
-
+# Example: Everyone can view books
 class BookListView(generics.ListAPIView):
-    """
-    GET /books/
-    Lists all books in the database.
-    - Accessible to everyone (unauthenticated users can read).
-    """
-
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.AllowAny]  # read-only, open
+    permission_classes = [permissions.AllowAny]  # Anyone can view
 
 
+# Example: Only authenticated users can retrieve
 class BookDetailView(generics.RetrieveAPIView):
-    """
-    GET /books/<id>/
-    Retrieves a single book by its ID.
-    - Accessible to everyone.
-    """
-
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
 
+# Example: Only authenticated users can create
 class BookCreateView(generics.CreateAPIView):
-    """
-    POST /books/create/
-    Allows authenticated users to create a new book.
-    """
-
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]  # must be logged in
+    permission_classes = [permissions.IsAuthenticated]
 
 
+# Example: Only staff can update
 class BookUpdateView(generics.UpdateAPIView):
-    """
-    PUT /books/<id>/update/
-    Allows authenticated users to update an existing book.
-    """
-
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
 
 
+# Example: Only staff can delete
 class BookDeleteView(generics.DestroyAPIView):
-    """
-    DELETE /books/<id>/delete/
-    Allows authenticated users to delete a book.
-    """
-
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
