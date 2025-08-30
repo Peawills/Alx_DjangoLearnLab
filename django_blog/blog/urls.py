@@ -6,20 +6,26 @@ from .views import (
     PostCreateView,
     PostUpdateView,
     PostDeleteView,
+    register,
+    profile,
 )
-from . import views
 
 urlpatterns = [
-    path("", PostListView.as_view(), name="post-list"),  # /  -> list
+    # Blog post URLs
+    path("", PostListView.as_view(), name="post-list"),  # Home / list of posts
     path(
-        "posts/", PostListView.as_view(), name="post-list"
-    ),  # /posts/ (optional duplicate route)
-    path("posts/new/", PostCreateView.as_view(), name="post-create"),  # create
-    path("posts/<int:pk>/", PostDetailView.as_view(), name="post-detail"),  # detail
-    path("posts/<int:pk>/edit/", PostUpdateView.as_view(), name="post-edit"),
-    path("posts/<int:pk>/delete/", PostDeleteView.as_view(), name="post-delete"),
-    path("register/", views.register, name="register"),
-    path("profile/", views.profile, name="profile"),
+        "post/<int:pk>/", PostDetailView.as_view(), name="post-detail"
+    ),  # View one post
+    path("post/new/", PostCreateView.as_view(), name="post-create"),  # Create a post
+    path(
+        "post/<int:pk>/update/", PostUpdateView.as_view(), name="post-update"
+    ),  # Update a post
+    path(
+        "post/<int:pk>/delete/", PostDeleteView.as_view(), name="post-delete"
+    ),  # Delete a post
+    # User authentication URLs
+    path("register/", register, name="register"),
+    path("profile/", profile, name="profile"),
     path(
         "login/",
         auth_views.LoginView.as_view(template_name="blog/login.html"),
@@ -29,5 +35,32 @@ urlpatterns = [
         "logout/",
         auth_views.LogoutView.as_view(template_name="blog/logout.html"),
         name="logout",
+    ),
+    # Password reset URLs (optional but good to have)
+    path(
+        "password-reset/",
+        auth_views.PasswordResetView.as_view(template_name="blog/password_reset.html"),
+        name="password_reset",
+    ),
+    path(
+        "password-reset/done/",
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="blog/password_reset_done.html"
+        ),
+        name="password_reset_done",
+    ),
+    path(
+        "password-reset-confirm/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="blog/password_reset_confirm.html"
+        ),
+        name="password_reset_confirm",
+    ),
+    path(
+        "password-reset-complete/",
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name="blog/password_reset_complete.html"
+        ),
+        name="password_reset_complete",
     ),
 ]
