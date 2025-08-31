@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Post, Comment
-
+from taggit.forms import TagWidget
 
 class CommentForm(forms.ModelForm):
     content = forms.CharField(
@@ -40,17 +40,18 @@ class UserUpdateForm(forms.ModelForm):
 
 
 class PostForm(forms.ModelForm):
-       class Meta:
+    class Meta:
         model = Post
         fields = ["title", "content", "tags"]
         widgets = {
+            "tags": TagWidget(),
             "title": forms.TextInput(attrs={"placeholder": "Post title"}),
             "content": forms.Textarea(
                 attrs={"rows": 6, "placeholder": "Write your post..."}
             ),
         }
-    
-    # A simple text input for tags (comma-separated). We'll parse this in the view.
+
+        # A simple text input for tags (comma-separated). We'll parse this in the view.
         tags_input = forms.CharField(
             required=False,
             help_text="Enter tags separated by commas. Example: django, python, tips",
