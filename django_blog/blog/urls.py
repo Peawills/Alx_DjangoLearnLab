@@ -18,7 +18,7 @@ from . import views
 
 
 urlpatterns = [
-    path("tags/<slug:slug>/", PostsByTagListView.as_view(), name="posts-by-tag"),
+    path("tags/<slug:tag_slug>/", PostByTagListView.as_view(), name="posts-by-tag"),
     # search
     path("search/", SearchResultsView.as_view(), name="post-search"),
     # Post URLs
