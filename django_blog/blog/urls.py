@@ -9,10 +9,18 @@ from .views import (
     CommentCreateView,
     CommentUpdateView,
     CommentDeleteView,
+    register,
+    profile,
+    PostsByTagListView,
+    SearchResultsView,
 )
 from . import views
 
+
 urlpatterns = [
+    path("tags/<slug:slug>/", PostsByTagListView.as_view(), name="posts-by-tag"),
+    # search
+    path("search/", SearchResultsView.as_view(), name="post-search"),
     # Post URLs
     path("", PostListView.as_view(), name="post-list"),
     path("post/<int:pk>/", PostDetailView.as_view(), name="post-detail"),

@@ -18,6 +18,102 @@ from .models import Post, Comment
 from .forms import CommentForm
 
 
+
+# --- Post views (PostCreateView/PostUpdateView should set tags using tags_input) ---
+
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = "blog/post_form.html"
+
+    def form_valid(self, form):
+        # Save post without tags first so we have an instance
+        form.instance.author = self.request.user
+        response = super().form_valid(form)
+        tags_input = form.cleaned_data.get("tags_input", "")
+        assign_tags_to_post(self.object, tags_input)
+        messages.success(self.request, "Post created.")
+        return response
+
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = "blog/post_form.html"
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        tags_input = form.cleaned_data.get("tags_input", "")
+        assign_tags_to_post(self.object, tags_input)
+        messages.success(self.request, "Post updated.")
+        return response
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
+
+
+# assign_tags_to_post helper
+def assign_tags_to_post(post, tags_input):
+    """
+    tags_input: comma-separated string of tag names
+    Ensures tag objects exist and assigns them to the post.
+    """
+    # Normalize and split
+    names = [t.strip() for t in tags_input.split(",") if t.strip()]
+    # Find or create Tag objects
+    tags = []
+    for name in names:
+        tag, _ = Tag.objects.get_or_create(name__iexact=False, defaults={"name": name})
+        # get_or_create with case-insensitive is clunky; instead try get then create
+        if not tag:
+            try:
+                tag = Tag.objects.get(name__iexact=name)
+            except Tag.DoesNotExist:
+                tag = Tag.objects.create(name=name)
+        tags.append(tag)
+    # assign
+    post.tags.set(tags)
+
+
+# --- Tag list (posts by tag) ---
+class PostsByTagListView(ListView):
+    model = Post
+    template_name = "blog/posts_by_tag.html"
+    context_object_name = "posts"
+    paginate_by = 10
+
+    def get_queryset(self):
+        slug = self.kwargs.get("slug")
+        self.tag = get_object_or_404(Tag, slug=slug)
+        return self.tag.posts.all()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["tag"] = self.tag
+        return ctx
+
+
+# --- Search view ---
+class SearchResultsView(ListView):
+    model = Post
+    template_name = "blog/search_results.html"
+    context_object_name = "posts"
+    paginate_by = 10
+
+    def get_queryset(self):
+        query = self.request.GET.get("q", "")
+        if not query:
+            return Post.objects.none()
+        # search title, content, and tag name
+        return Post.objects.filter(
+            Q(title__icontains=query)
+            | Q(content__icontains=query)
+            | Q(tags__name__icontains=query)
+        ).distinct()
+
+
 class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     form_class = CommentForm
