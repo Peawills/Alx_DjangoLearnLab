@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.text import slugify
+from taggit.managers import TaggableManager
 
 
 class Comment(models.Model):
@@ -45,7 +46,7 @@ class Post(models.Model):
     content = models.TextField()
     published_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
-    tags = models.ManyToManyField(Tag, related_name="posts", blank=True)  # new field
+    tags = TaggableManager()
 
     class Meta:
         ordering = ["-published_date"]
